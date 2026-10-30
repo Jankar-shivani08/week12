@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: demoapp12
-          image: akshayaaaaaaaaaaaaaaaaaaaaaaa/week12demo:v1
+          image: shivani0824/week12app:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
