@@ -3,15 +3,15 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'shivani0824/week12app:v1'
+        // Defining the exact path to Python here so we only write it once
+        PYTHON_EXE = 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Python dependencies'
-                // Using 'python' relies on the system PATH. If it fails, use the full path to python.exe
-                bat 'python -m pip install -r requirements.txt'
-                bat 'python -m pip install pytest selenium'
+                bat "\"${env.PYTHON_EXE}\" -m pip install -r requirements.txt"
             }
         }
 
@@ -23,14 +23,14 @@ pipeline {
                         // 1. Kill any old python processes to free up port 5000
                         bat 'taskkill /F /IM python.exe || exit 0'
                         
-                        // 2. Start Flask app in background
-                        bat 'start /B "" python app.py'
+                        // 2. Start Flask app in background using the hardcoded path
+                        bat "start /B \"\" \"${env.PYTHON_EXE}\" app.py"
                         
                         // 3. Wait 5 seconds for the app to start
                         bat 'ping 127.0.0.1 -n 6 > nul'
                         
-                        // 4. Run Tests
-                        bat 'python -m pytest -v'
+                        // 4. Run Tests using the hardcoded path
+                        bat "\"${env.PYTHON_EXE}\" -m pytest -v"
                     } finally {
                         // 5. ALWAYS kill the Flask app after tests (pass or fail)
                         echo 'Cleaning up: Stopping Flask App'
@@ -54,7 +54,6 @@ pipeline {
                     usernameVariable: 'DOCKERHUB_USER',
                     passwordVariable: 'DOCKERHUB_PASSWORD'
                 )]) {
-                    // Note: In batch, %VAR% is used instead of $VAR
                     bat 'echo %DOCKERHUB_PASSWORD%| docker login -u %DOCKERHUB_USER% --password-stdin'
                 }
             }
@@ -69,7 +68,6 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes'
-                // Using single quotes so Groovy doesn't mess with the YAML file names
                 bat 'kubectl apply -f deployment.yaml'
                 bat 'kubectl apply -f service.yaml'
             }
@@ -84,8 +82,8 @@ pipeline {
             echo 'Pipeline failed. Check the Jenkins console output.'
         }
         always {
-            // Ensure Docker doesn't leave dangling build caches
-            bat 'docker system prune -f || exit 0'
+            // Changed this to image prune so you don't delete all your containers/networks every time
+            bat 'docker image prune -f || exit 0'
         }
     }
 }
