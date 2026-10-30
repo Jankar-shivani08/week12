@@ -3,15 +3,13 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'shivani0824/week12app:v1'
-        PYTHON_EXE = 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Python dependencies'
-                // Extra quotes added here
-                bat "\"\"${env.PYTHON_EXE}\" -m pip install -r requirements.txt\""
+                bat 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pip install -r requirements.txt'
             }
         }
 
@@ -21,13 +19,9 @@ pipeline {
                 script {
                     try {
                         bat 'taskkill /F /IM python.exe || exit 0'
-                        
-                        bat "start /B \"\" \"${env.PYTHON_EXE}\" app.py"
-                        
+                        bat 'start /B C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\python.exe app.py'
                         bat 'ping 127.0.0.1 -n 6 > nul'
-                        
-                        // Extra quotes added here
-                        bat "\"\"${env.PYTHON_EXE}\" -m pytest -v\""
+                        bat 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pytest -v'
                     } finally {
                         echo 'Cleaning up: Stopping Flask App'
                         bat 'taskkill /F /IM python.exe || exit 0'
