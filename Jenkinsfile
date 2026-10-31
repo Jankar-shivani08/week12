@@ -55,7 +55,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+               stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes'
                 bat 'kubectl apply -f deployment.yaml'
