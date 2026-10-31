@@ -17,21 +17,22 @@ pipeline {
             }
         }
 
-                stage('Run Flask App and Selenium Tests') {
+                        stage('Run Flask App and Selenium Tests') {
             steps {
                 echo 'Running Selenium Tests'
                 script {
                     try {
+                        // 1. Kill old processes
                         bat 'taskkill /F /IM python.exe || exit 0'
                         
-                        // Added 'call' and wrapped the path in quotes
-                        bat 'call start /B "C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" app.py'
+                        // 2. Start Flask app
+                        bat 'start /B C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe app.py'
                         
-                        bat 'ping 127.0.0.1 -n 6 > nul'
+                        // 3. FORCE WINDOWS TO SLEEP FOR 15 SECONDS
+                        bat 'timeout /t 15 /nobreak'
                         
-                        // Added 'call' and wrapped the whole command in quotes
+                        // 4. Run tests
                         bat 'call "C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" -m pytest -v'
-                        
                     } finally {
                         echo 'Cleaning up: Stopping Flask App'
                         bat 'taskkill /F /IM python.exe || exit 0'
