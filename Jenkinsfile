@@ -29,7 +29,7 @@ pipeline {
                         bat 'start /B C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe app.py'
                         
                         // 3. FORCE WINDOWS TO SLEEP FOR 15 SECONDS
-                        bat 'timeout /t 15 /nobreak'
+                       bat 'ping 127.0.0.1 -n 16 > nul' 
                         
                         // 4. Run tests
                         bat 'call "C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" -m pytest -v'
