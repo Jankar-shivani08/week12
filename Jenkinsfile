@@ -6,22 +6,32 @@ pipeline {
     }
 
     stages {
-        stage('Install Dependencies') {
+                stage('Install Dependencies') {
             steps {
                 echo 'Installing Python dependencies'
-                bat 'C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pip install -r requirements.txt'
+                // Check if requirements.txt is actually there
+                bat 'dir requirements.txt'
+                
+                // Use 'call' so Jenkins doesn't swallow the output
+                bat 'call "C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" -m pip install -r requirements.txt'
             }
         }
 
-        stage('Run Flask App and Selenium Tests') {
+                stage('Run Flask App and Selenium Tests') {
             steps {
                 echo 'Running Selenium Tests'
                 script {
                     try {
                         bat 'taskkill /F /IM python.exe || exit 0'
-                        bat 'start /B C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe app.py'
+                        
+                        // Added 'call' and wrapped the path in quotes
+                        bat 'call start /B "C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" app.py'
+                        
                         bat 'ping 127.0.0.1 -n 6 > nul'
-                        bat 'C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -m pytest -v'
+                        
+                        // Added 'call' and wrapped the whole command in quotes
+                        bat 'call "C:\\Users\\Shivani\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" -m pytest -v'
+                        
                     } finally {
                         echo 'Cleaning up: Stopping Flask App'
                         bat 'taskkill /F /IM python.exe || exit 0'
