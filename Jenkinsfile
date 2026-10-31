@@ -65,11 +65,12 @@ pipeline {
             }
         }
 
-               stage('Deploy to Kubernetes') {
+                      stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes'
-                bat 'kubectl apply -f deployment.yaml'
-                bat 'kubectl apply -f service.yaml'
+                // Force kubectl to use the exact path to your config file
+                bat 'kubectl --kubeconfig="C:\\Users\\Shivani\\.kube\\config" apply -f deployment.yaml'
+                bat 'kubectl --kubeconfig="C:\\Users\\Shivani\\.kube\\config" apply -f service.yaml'
             }
         }
     }
